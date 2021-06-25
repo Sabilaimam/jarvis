@@ -2,13 +2,16 @@ import pyttsx3 #pip install pyttsx3
 import speech_recognition as sr #pip install speechRecognition
 import datetime
 import wikipedia #pip install wikipedia
+import wolframalpha
 import webbrowser
 import os
 import smtplib
 
+MASTER = "Ramsha"
+
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-# print(voices[1].id)
+# print(voices[0].id)
 engine.setProperty('voice', voices[0].id)
 
 
@@ -20,15 +23,15 @@ def speak(audio):
 def wishMe():
     hour = int(datetime.datetime.now().hour)
     if hour>=0 and hour<12:
-        speak("Good Morning!")
+        speak("Good Morning" + MASTER)
 
     elif hour>=12 and hour<18:
-        speak("Good Afternoon!")   
+        speak("Good Afternoon" + MASTER)   
 
     else:
-        speak("Good Evening!")  
+        speak("Good Evening" + MASTER)  
 
-    speak("I am Jarvis Sir. Please tell me how may I help you")       
+    speak("Hi  i am Jarvis , how may I help you")       
 
 def takeCommand():
     #It takes microphone input from the user and returns string output
@@ -45,7 +48,7 @@ def takeCommand():
         print(f"User said: {query}\n")
 
     except Exception as e:
-        # print(e)    
+        #print(e)    
         print("Say that again please...")  
         return "None"
     return query
@@ -54,14 +57,16 @@ def sendEmail(to, content):
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
-    server.login('youemail@gmail.com', 'your-password')
+    server.login('youremail@gmail.com', 'your-password')
     server.sendmail('youremail@gmail.com', to, content)
     server.close()
+
+app = wolframalpha.Client("2H8UGW-43HE5PLH39")
 
 if __name__ == "__main__":
     wishMe()
     while True:
-    # if 1:
+    #if 1:
         query = takeCommand().lower()
 
         # Logic for executing tasks based on query
@@ -73,18 +78,25 @@ if __name__ == "__main__":
             print(results)
             speak(results)
 
-        elif 'open youtube' in query:
-            webbrowser.open("youtube.com")
+        elif 'open youtube' in query.lower():
+            #webbrowser.open('youtube.com')
+            url = "youtube.com"
+            chrome_path = 'c:/program Files (x86)/Google/Chrome/Application/chrome.exe %s'
+            webbrowser.get(chrome_path).open(url)
 
-        elif 'open google' in query:
-            webbrowser.open("google.com")
+
+        elif 'open google' in query.lower():
+            #webbrowser.open('youtube.com')
+            url = "google.com"
+            chrome_path = 'c:/program Files (x86)/Google/Chrome/Application/chrome.exe %s'
+            webbrowser.get(chrome_path).open(url)
 
         elif 'open stackoverflow' in query:
             webbrowser.open("stackoverflow.com")   
 
 
         elif 'play music' in query:
-            music_dir = 'D:\\Non Critical\\songs\\Favorite Songs2'
+            music_dir = 'E:\\anas hard disk\\new songs of 2012'
             songs = os.listdir(music_dir)
             print(songs)    
             os.startfile(os.path.join(music_dir, songs[0]))
@@ -94,16 +106,19 @@ if __name__ == "__main__":
             speak(f"Sir, the time is {strTime}")
 
         elif 'open code' in query:
-            codePath = "C:\\Users\\Haris\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+            codePath = "C:\\Users\\Anas\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
             os.startfile(codePath)
 
-        elif 'email to ramsha' in query:
+        elif 'email to sabila' in query:
             try:
                 speak("What should I say?")
                 content = takeCommand()
-                to = "imamramsha786@gmail.com"    
+                to = "sabilaimam.nshm.edu.in"    
                 sendEmail(to, content)
                 speak("Email has been sent!")
             except Exception as e:
                 print(e)
-                speak("Sorry I am not able to send this email at the moment")    
+                speak("I am not able to send this email") 
+        elif 'temperature' in query:
+            res = app.query(query)
+            speak(next(res.results).text)
